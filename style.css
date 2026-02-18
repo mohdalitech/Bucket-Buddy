@@ -1,36 +1,67 @@
 body {
-    font-family: Arial, sans-serif;
-    background: #f4f6f8;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg, #eef2f7, #d9e4f5);
+    margin: 0;
+    padding: 0;
 }
 
-.container {
-    width: 400px;
+.app {
+    max-width: 480px;
     margin: 50px auto;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
     text-align: center;
 }
 
+h1 {
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
 input {
-    width: 90%;
-    padding: 8px;
-    margin-bottom: 10px;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
 }
 
 button {
-    padding: 8px 16px;
-    background: #007bff;
-    color: white;
+    width: 100%;
+    padding: 10px;
     border: none;
+    border-radius: 6px;
+    background: #4a6cff;
+    color: white;
+    font-size: 16px;
     cursor: pointer;
 }
 
 button:hover {
-    background: #0056b3;
+    background: #324ee0;
 }
 
-canvas {
-    margin-top: 20px;
+#status {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #666;
+}
+
+.hidden {
+    display: none;
+}
+
+#cheapestPlatform {
+    font-weight: bold;
+    color: #1b8a3d;
 }
