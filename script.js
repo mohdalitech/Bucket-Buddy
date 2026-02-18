@@ -1,68 +1,108 @@
 const btn = document.getElementById("compareBtn");
+const linkInput = document.getElementById("productLink");
+const statusEl = document.getElementById("status");
 const productNameEl = document.getElementById("productName");
 const cheapestEl = document.getElementById("cheapestPlatform");
-const ctx = document.getElementById("priceChart");
+const resultCard = document.getElementById("resultCard");
+const chartCanvas = document.getElementById("priceChart");
 
 let chart;
 
-btn.addEventListener("click", () => {
-    const link = document.getElementById("productLink").value.trim();
+/* ---------------- MAIN FLOW ---------------- */
 
-    if (!link) {
-        alert("Please enter a product link");
+btn.addEventListener("click", async () => {
+    const link = linkInput.value.trim();
+
+    if (!isValidLink(link)) {
+        statusEl.innerText = "Please enter a valid product link.";
         return;
     }
 
-    // Extract product name from URL
+    statusEl.innerText = "Analyzing product and fetching prices...";
+    resultCard.classList.add("hidden");
+
     const productName = extractProductName(link);
+    const prices = await fetchPrices(productName);
+
+    const sortedPrices = sortPrices(prices);
+    const cheapest = Object.keys(sortedPrices)[0];
+
     productNameEl.innerText = "Detected Product: " + productName;
-
-    // Simulated API / fallback prices
-    const prices = {
-        Amazon: randomPrice(),
-        Flipkart: randomPrice(),
-        Myntra: randomPrice(),
-        Ajio: randomPrice(),
-        Meesho: randomPrice()
-    };
-
-    const cheapest = findCheapest(prices);
     cheapestEl.innerText = "Cheapest Platform: " + cheapest;
 
-    drawChart(prices);
+    drawChart(sortedPrices, cheapest);
+
+    statusEl.innerText = "Comparison completed successfully.";
+    resultCard.classList.remove("hidden");
 });
 
-// Helpers
+/* ---------------- FUNCTIONS ---------------- */
+
+// Basic URL validation
+function isValidLink(link) {
+    return link.startsWith("http://") || link.startsWith("https://");
+}
+
+// Extract readable product name from URL
 function extractProductName(url) {
     try {
-        const part = url.split("/").pop();
-        return part.replace(/[-_]/g, " ").split("?")[0];
+        let part = url.split("/").pop().split("?")[0];
+        return part.replace(/[-_]/g, " ");
     } catch {
         return "Unknown Product";
     }
 }
 
-function randomPrice() {
-    return Math.floor(Math.random() * 10000) + 40000;
+// Simulated API layer (acts like backend)
+async function fetchPrices(product) {
+    await delay(800); // simulate network delay
+
+    return {
+        Amazon: generatePrice(),
+        Flipkart: generatePrice(),
+        Myntra: generatePrice(),
+        Ajio: generatePrice(),
+        Meesho: generatePrice()
+    };
 }
 
-function findCheapest(prices) {
-    return Object.keys(prices).reduce((a, b) =>
-        prices[a] < prices[b] ? a : b
+// Price generator
+function generatePrice() {
+    return Math.floor(Math.random() * 7000) + 43000;
+}
+
+// Sort prices ascending
+function sortPrices(prices) {
+    return Object.fromEntries(
+        Object.entries(prices).sort((a, b) => a[1] - b[1])
     );
 }
 
-function drawChart(prices) {
+// Draw bar chart
+function drawChart(prices, cheapest) {
     if (chart) chart.destroy();
 
-    chart = new Chart(ctx, {
+    chart = new Chart(chartCanvas, {
         type: "bar",
         data: {
             labels: Object.keys(prices),
             datasets: [{
-                label: "Price Comparison (₹)",
-                data: Object.values(prices)
+                label: "Price (₹)",
+                data: Object.values(prices),
+                backgroundColor: Object.keys(prices).map(p =>
+                    p === cheapest ? "#2ecc71" : "#4a6cff"
+                )
             }]
+        },
+        options: {
+            plugins: {
+                legend: { display: false }
+            }
         }
     });
+}
+
+// Utility delay
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
